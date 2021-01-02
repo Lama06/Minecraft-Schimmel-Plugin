@@ -1,0 +1,13 @@
+name: MCSchimmelPlugin
+version: 1.0
+main: io.github.lama06.schimmel.Schimmel
+api-version: 1.16
+authors: [ Lama06 ]
+description: Blöcke fangen bei der Berührung mit Wasser an zu schimmeln
+commands:
+  schimmel:
+    description: Aktiviert / Deaktiviert das Schimmel Plugin
+    usage: /schimmel an ODER /schimmel aus
+  schimmelcheck:
+    description: Überprüft ob der Block, der angeguckt wird, schimmelt
+    usage: /schimmelcheck
