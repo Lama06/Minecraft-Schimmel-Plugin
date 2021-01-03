@@ -209,7 +209,7 @@ public final class Schimmel extends JavaPlugin implements Listener {
         } else if(cmd.getName().equals("schimmelcheck")) {
             if(sender instanceof Player) {
                 Player player = (Player) sender;
-                if(moldyBlocks.contains(player.getTargetBlock(5))) {
+                if(moldyBlocks.contains(player.getTargetBlock(null, 5))) {
                     player.sendMessage("Dieser Block schimmelt");
                 } else {
                     player.sendMessage("Dieser Block schimmelt nicht");
