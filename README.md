@@ -11,4 +11,4 @@
 - Wenn man auf einem schimmelnden Block steht, kriegt man den Effekt Vergiftung.
 - Mit dem Command `/schimmelcheck` kann überprüft werden, ob der Block, den man gerade anguckt, schimmelt.
 - Das Plugin setzt sich nach jedem Neustart des Servers zurück, das kann aber auch `/schimmel reset` bewirkt werden. 
-- Getestet in der Minecraft Version 1.16.4.
+- Getestet in der Minecraft Version 1.16.4 auf einem Paper Server.
