@@ -1,5 +1,5 @@
 name: MCSchimmelPlugin
-version: 1.0
+version: 1.1
 main: io.github.lama06.schimmel.Schimmel
 api-version: 1.16
 authors: [ Lama06 ]

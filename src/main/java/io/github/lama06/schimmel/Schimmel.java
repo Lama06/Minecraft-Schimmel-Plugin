@@ -24,7 +24,7 @@ public final class Schimmel extends JavaPlugin implements Listener {
     private boolean enabled = false;
 
     // Blockarten die von Schimmel betroffen sein können.
-    private final Material[] possibleMoldyBlocks = {
+    private final HashSet<Material> possibleMoldyBlocks = new HashSet<>(Arrays.asList(
             Material.STONE,
             Material.STONE_SLAB,
             Material.STONE_STAIRS,
@@ -38,14 +38,40 @@ public final class Schimmel extends JavaPlugin implements Listener {
             Material.STONE_BRICK_STAIRS,
 
             Material.SPRUCE_LOG,
-            Material.SPRUCE_WOOD,
+            Material.SPRUCE_PLANKS,
             Material.SPRUCE_SLAB,
-            Material.SPRUCE_STAIRS
-    };
+            Material.SPRUCE_STAIRS,
+
+            Material.BIRCH_LOG,
+            Material.BIRCH_PLANKS,
+            Material.BIRCH_SLAB,
+            Material.BIRCH_STAIRS,
+
+            Material.OAK_LOG,
+            Material.OAK_PLANKS,
+            Material.OAK_SLAB,
+            Material.OAK_STAIRS,
+
+            Material.DARK_OAK_LOG,
+            Material.DARK_OAK_PLANKS,
+            Material.DARK_OAK_SLAB,
+            Material.DARK_OAK_STAIRS,
+
+            Material.ACACIA_LOG,
+            Material.ACACIA_PLANKS,
+            Material.ACACIA_SLAB,
+            Material.ACACIA_STAIRS,
+
+            Material.JUNGLE_LOG,
+            Material.JUNGLE_PLANKS,
+            Material.JUNGLE_SLAB,
+            Material.JUNGLE_STAIRS
+    ));
 
     // Gibt an, in welchen Block sich ein Block während seines Schimmelprozesses umwandelt
     private final Map<Material, Material> moldyBlockVariants = new HashMap<Material, Material>() {{
-        put(Material.STONE, Material.STONE_SLAB);
+        put(Material.STONE, Material.STONE_STAIRS);
+        put(Material.STONE_STAIRS, Material.STONE_SLAB);
 
         put(Material.COBBLESTONE, Material.MOSSY_COBBLESTONE);
         put(Material.MOSSY_COBBLESTONE, Material.MOSSY_COBBLESTONE_SLAB);
@@ -54,7 +80,22 @@ public final class Schimmel extends JavaPlugin implements Listener {
         put(Material.MOSSY_STONE_BRICKS, Material.MOSSY_STONE_BRICK_SLAB);
 
         put(Material.SPRUCE_LOG, Material.SPRUCE_SLAB);
-        put(Material.SPRUCE_WOOD, Material.SPRUCE_SLAB);
+        put(Material.SPRUCE_PLANKS, Material.SPRUCE_SLAB);
+
+        put(Material.BIRCH_LOG, Material.BIRCH_SLAB);
+        put(Material.BIRCH_PLANKS, Material.BIRCH_SLAB);
+
+        put(Material.OAK_LOG, Material.OAK_SLAB);
+        put(Material.OAK_PLANKS, Material.OAK_SLAB);
+
+        put(Material.DARK_OAK_LOG, Material.DARK_OAK_SLAB);
+        put(Material.DARK_OAK_PLANKS, Material.DARK_OAK_SLAB);
+
+        put(Material.ACACIA_LOG, Material.ACACIA_SLAB);
+        put(Material.ACACIA_PLANKS, Material.ACACIA_SLAB);
+
+        put(Material.JUNGLE_LOG, Material.JUNGLE_SLAB);
+        put(Material.JUNGLE_PLANKS, Material.JUNGLE_SLAB);
     }};
 
     // Liste der Blöcke, die aktuell schimmeln
@@ -67,7 +108,7 @@ public final class Schimmel extends JavaPlugin implements Listener {
     // Wenn ein Spieler Wasser setzt, wird an diesem Ort Schimmel ausgelöst
     @EventHandler
     public void onPlayerPlacesWater(PlayerBucketEmptyEvent e) {
-        if(enabled && e.getBucket() == Material.WATER_BUCKET && Arrays.asList(possibleMoldyBlocks).contains(e.getBlockClicked().getType())) {
+        if(enabled && e.getBucket() == Material.WATER_BUCKET && possibleMoldyBlocks.contains(e.getBlockClicked().getType())) {
             moldyBlocks.add(e.getBlockClicked());
         }
     }
@@ -91,7 +132,7 @@ public final class Schimmel extends JavaPlugin implements Listener {
         }
     }
 
-    // Wenn ein Spieler sich auf einen verschimmelten Block bewegt diesem Vergiftung geben
+    // Wenn ein Spieler sich auf einen verschimmelten Block bewegt, dem Spieler Vergiftung geben
     @EventHandler
     public void onPlayerMovesOnMoldyBlock(PlayerMoveEvent e) {
         // Block unter dem Spieler erhalten
@@ -100,7 +141,10 @@ public final class Schimmel extends JavaPlugin implements Listener {
         Block block = e.getPlayer().getWorld().getBlockAt(location);
 
         if(enabled && moldyBlocks.contains(block)) {
-            e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.POISON, 80, 1));
+            Player player = e.getPlayer();
+            player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 80, 1));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20, 1));
         }
     }
 
@@ -118,7 +162,7 @@ public final class Schimmel extends JavaPlugin implements Listener {
         for(Iterator<Block> iterator = moldyBlocks.iterator(); iterator.hasNext();) {
             Block block = iterator.next();
 
-            if(rnd.nextInt(5) == 1) {
+            if(rnd.nextInt(8) == 1) {
                 // "Ratten spawnen"
                 Location location = block.getLocation();
                 location.setY(location.getY() + 1);
@@ -158,6 +202,9 @@ public final class Schimmel extends JavaPlugin implements Listener {
                 enabled = false;
                 moldyBlocks.clear();
                 sender.sendMessage("Das Plugin wurde nun deaktiviert");
+            } else if(args[0].equals("reset")) {
+                moldyBlocks.clear();
+                sender.sendMessage("Alle schimmelnden Blöcke wurden zurückgesetzt");
             }
         } else if(cmd.getName().equals("schimmelcheck")) {
             if(sender instanceof Player) {
